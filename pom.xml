@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>software.into.ala</groupId>
+    <artifactId>main</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <description>A.L.A. (Automated Linguistic Analysis)</description>
+    
+    <url>https://ideas.into.software/</url>
+    
+    <organization>
+        <name>mhs (mhs@into.software)</name>
+        <url>https://ideas.into.software/</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <id>mhs</id>
+            <name>Michal H. Siemaszko</name>
+            <email>mhs@into.software</email>
+            <organization>Ideas Into Software</organization>
+            <organizationUrl>https://ideas.into.software/</organizationUrl>
+        </developer>
+    </developers> 
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.opensource.org/licenses/apache2.0.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <scm>
+        <url>https://github.com/ideas-into-software/automated-linguistic-analysis</url>
+        <connection>scm:git:https://github.com/ideas-into-software/automated-linguistic-analysis.git</connection>
+        <developerConnection>scm:git:https://github.com/ideas-into-software/automated-linguistic-analysis.git</developerConnection>
+    </scm>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<bnd.version>4.1.0</bnd.version>
+		<slf4j-api.version>1.7.25</slf4j-api.version>
+		<johnzon.version>1.1.0</johnzon.version>
+		<postgresql.version>42.2.5</postgresql.version>
+		<hibernate.version>5.2.12.Final</hibernate.version>
+		<hibernate.antlr.version>2.7.7_5</hibernate.antlr.version>
+		<hibernate.dom4j.version>1.6.1_5</hibernate.dom4j.version>
+		<json-api.version>2.9.0</json-api.version>
+		<camel.version>2.23.1</camel.version>
+		<commons-fileupload.version>1.3.3</commons-fileupload.version>
+		<ibmwatson.version>6.14.2</ibmwatson.version>
+		<felix.systemready.version>0.4.0</felix.systemready.version>
+		<k8-maven.version>1.0.5</k8-maven.version>
+		<k8-maven.docker-registry>192.168.0.53:5000</k8-maven.docker-registry>
+		<k8-maven.insecureRegistry>${k8-maven.docker-registry}</k8-maven.insecureRegistry>
+		<k8-maven.memory>8192</k8-maven.memory>
+		<k8-maven.cpus>4</k8-maven.cpus>
+	</properties>
+
+    <repositories>
+        <repository>
+            <id>OSGi</id>
+            <name>OSGi public binaries</name>
+            <url>https://oss.sonatype.org/content/groups/osgi</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Apache Snapshots</id>
+            <url>https://repository.apache.org/content/groups/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Bnd Snapshots</id>
+            <name>Bnd Latest build</name>
+            <url>https://bndtools.ci.cloudbees.com/job/bnd.master/lastSuccessfulBuild/artifact/dist/bundles/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.osgi.enroute</groupId>
+				<artifactId>osgi-api</artifactId>
+				<version>7.0.0</version>
+				<type>pom</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi.enroute</groupId>
+				<artifactId>enterprise-api</artifactId>
+				<version>7.0.0</version>
+				<type>pom</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi.enroute</groupId>
+				<artifactId>impl-index</artifactId>
+				<version>7.0.0</version>
+				<type>pom</type>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi.enroute</groupId>
+				<artifactId>debug-bundles</artifactId>
+				<version>7.0.0</version>
+				<type>pom</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi.enroute</groupId>
+				<artifactId>test-bundles</artifactId>
+				<version>7.0.0</version>
+				<type>pom</type>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Use the bnd-maven-plugin and assemble the symbolic names -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <configuration>
+                        <bnd><![CDATA[
+Built-By: ${project.organization.name}
+Bundle-Vendor: ${project.organization.url}
+Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
+-sources: true
+-contract: *
+]]></bnd>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>bnd-process</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!-- Required to make the maven-jar-plugin pick up the bnd 
+                    generated manifest. Also avoid packaging empty Jars -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <configuration>
+                        <archive>
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        </archive>
+                        <skipIfEmpty>true</skipIfEmpty>
+                    </configuration>
+                </plugin>
+
+                <!-- Setup the indexer for running and testing -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-indexer-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <configuration>
+                        <localURLs>REQUIRED</localURLs>
+                        <attach>false</attach>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>index</id>
+                            <goals>
+                                <goal>index</goal>
+                            </goals>
+                            <configuration>
+                                <indexName>${project.artifactId}</indexName>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>test-index</id>
+                            <goals>
+                                <goal>index</goal>
+                            </goals>
+                            <configuration>
+                                <indexName>${project.artifactId}</indexName>
+                                <outputFile>${project.build.directory}/test-index.xml</outputFile>
+                                <scopes>
+                                    <scope>test</scope>
+                                </scopes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Define the version of the resolver plugin we use -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-resolver-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <configuration>
+                        <failOnChanges>false</failOnChanges>
+                        <bndruns>
+                        </bndruns>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>resolve</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <!-- Define the version of the export plugin we use -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-export-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <configuration>
+                        <resolve>true</resolve>
+                        <failOnChanges>true</failOnChanges>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>export</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <!-- Define the version of the testing plugin that we use -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-testing-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>testing</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <!-- Define the version of the baseline plugin we use and avoid failing
+                    when no baseline jar exists. (for example before the first release) -->
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-baseline-maven-plugin</artifactId>
+                    <version>${bnd.version}</version>
+                    <configuration>
+                        <failOnMissing>false</failOnMissing>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>baseline</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+	<modules>
+		<module>dao-api</module>
+		<module>dao-impl-jpa</module>
+		<module>service-messaging-api</module>
+		<module>service-messaging-dto</module>
+		<module>service-messaging-impl</module>
+		<module>service-transcription-api</module>
+		<module>service-transcription-impl</module>
+		<module>service-linguistics-api</module>
+		<module>service-linguistics-impl</module>
+		<module>service-status-api</module>
+		<module>service-status-impl</module>
+		<module>service-voiceanalysis-api</module>
+		<module>service-voiceanalysis-impl</module>
+		<module>rest-common</module>
+		<module>rest-voiceanalysis</module>
+		<module>rest-status</module>
+		<module>mono-app</module>
+		<module>k8-common</module>
+		<module>k8-infra</module>
+		<module>k8-transcription-app</module>
+		<module>k8-linguistics-app</module>
+		<module>k8-web-app</module>
+	</modules>
+
+	<profiles>
+		<!-- Kubernetes version -->
+		<!-- build (including Docker images): mvn -P k8 install  -->
+		<!-- deploy: mvn -P k8 deploy -->
+		<profile>
+			<id>k8</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<!-- disabled so 'deploy' phase can be used for deploying to Kubernetes cluster -->
+						<plugin>
+							<artifactId>maven-deploy-plugin</artifactId>
+							<configuration>
+								<skip>true</skip>
+							</configuration>
+						</plugin>						           
+						<plugin>
+							<groupId>com.github.deanjameseverett</groupId>
+							<artifactId>k8-maven-plugin</artifactId>
+							<version>${k8-maven.version}</version>
+							<executions>
+								<execution>
+									<id>container</id>
+									<phase>install</phase>
+									<goals>
+										<goal>deleteImage</goal>
+										<goal>buildImage</goal>
+									</goals>
+									<configuration>
+										<dockerRegistry>${k8-maven.docker-registry}</dockerRegistry>
+										<imageName>ala-${project.artifactId}</imageName>
+									</configuration>						
+								</execution>
+								<execution>
+									<id>cluster</id>
+									<phase>deploy</phase>
+									<goals>
+										<goal>startMinikube</goal>
+										<goal>apply</goal>
+									</goals>
+									<configuration>
+										<insecureRegistry>${k8-maven.insecureRegistry}</insecureRegistry>
+										<memory>${k8-maven.memory}</memory>
+										<cpus>${k8-maven.cpus}</cpus>	
+									</configuration>									
+								</execution>					
+							</executions>
+						</plugin>					
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
+	
+</project>

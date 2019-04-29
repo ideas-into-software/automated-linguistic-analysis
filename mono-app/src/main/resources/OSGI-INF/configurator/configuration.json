@@ -1,0 +1,52 @@
+{
+    // Global Settings
+    ":configurator:resource-version" : 1,
+    ":configurator:symbolic-name" : "software.into.ala.mono-app.config",
+    ":configurator:version" : "0.0.1-SNAPSHOT",
+    
+    // Configure a JPA resource provider
+    "org.apache.aries.tx.control.jpa.xa~ala": {
+           "name": "ala.database",
+           "osgi.jdbc.driver.class": "org.postgresql.Driver",
+           "url": "jdbc:postgresql://localhost:5432/autoanal?user=[ENTER USERNAME]&password=[ENTER PASSWORD]&stringtype=unspecified",
+           "osgi.unit.name": "ala-dao" },     
+    
+    // Target the Dao impls at the provider we configured
+    "software.into.ala.dao.impl.jpa.FileDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.AnalysisDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.TranscriptDaoImpl": {
+           "provider.target": "(name=ala.database)" },     
+   
+   // Configure messaging service
+   "software.into.ala.service.messaging" : {
+		"host": "localhost",
+		"port": 5672
+   },
+   
+   // Configure multipart request processing
+   "org.apache.aries.jax.rs.whiteboard.default": {
+		"osgi.http.whiteboard.servlet.multipart.enabled" : true,
+		"osgi.http.whiteboard.servlet.multipart.location" : "[ENTER FILE STORAGE LOCATION]",
+		"osgi.http.whiteboard.servlet.multipart.fileSizeThreshold" : 1000000,
+		"osgi.http.whiteboard.servlet.multipart.maxFileSize" : 20000000,
+		"osgi.http.whiteboard.servlet.multipart.maxRequestSize" : 20000000
+    }, 
+    
+    // Configure transcription service
+    // TODO: remove API key before commit!
+    "software.into.ala.service.transcription": {
+    	"endpoint": "[ENTER ENDPOINT ADDRESS]",
+    	"apiKey": "[ENTER API KEY]", 
+    	"fileStorageLocation": "[ENTER FILE STORAGE LOCATION]"
+    },
+    
+    // Configure linguistics service 
+    // TODO: remove API key before commit!
+    "software.into.ala.service.linguistics": {
+    	"endpoint": "[ENTER ENDPOINT ADDRESS]",
+    	"apiKey": "[ENTER API KEY]",
+    	"apiVersion": "2017-09-21"
+    }
+}

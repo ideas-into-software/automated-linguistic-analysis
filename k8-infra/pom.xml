@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>software.into.ala</groupId>
+		<artifactId>main</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>k8-infra</artifactId>
+	<packaging>pom</packaging>
+
+	<description>Automated Linguistic Analysis (ALA) - K8 infra</description>
+
+	<profiles>
+		<!-- Kubernetes version -->
+		<!-- deploy: mvn -P k8 deploy -->
+		<profile>
+			<id>k8</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.deanjameseverett</groupId>
+						<artifactId>k8-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>cluster</id>
+								<configuration>
+									<includeFiles>
+										<!-- Set up RabbitMQ -->
+										<param>infra-rabbitmq-statefulset.yaml</param>
+										<!-- Set up CockroachDB -->
+										<param>infra-cockroachdb-statefulset.yaml</param>
+										<param>infra-cockroachdb-cluster-init.yaml</param>
+									</includeFiles>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

@@ -1,0 +1,7 @@
+Include-Resource: lib
+Bundle-ClassPath: ., core-6.14.2.jar, commons-io-2.6.jar, commons-lang3-3.5.jar, gson-2.8.0.jar, logging-interceptor-3.11.0.jar, okhttp-3.11.0.jar, okhttp-urlconnection-3.11.0.jar, okio-1.14.0.jar, jersey-jsr166e-2.25.1.jar, tone-analyzer-6.14.2.jar
+Import-Package: \
+	android.*;resolution:=optional,\
+	org.conscrypt.*;resolution:=optional,\
+	sun.misc.*;resolution:=optional,\
+	*

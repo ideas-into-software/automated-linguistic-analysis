@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ala-@project.artifactId@
+  labels:
+    app: ala
+    tier: frontend
+    ver: @project.version@
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ala
+      tier: frontend
+      ver: @project.version@  
+  template:
+    metadata:
+      labels:
+        app: ala
+        tier: frontend
+        ver: @project.version@  
+    spec:
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - hostPath:
+          path: "/mnt/ala_files"
+          type: DirectoryOrCreate
+        name: ala-@project.artifactId@-pv-storage
+      containers: 
+      - image: @k8-maven.docker-registry@/ala-@project.artifactId@:@project.version@
+        name: ala-@project.artifactId@
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts: 
+        - mountPath: /files
+          name: ala-@project.artifactId@-pv-storage        
+        readinessProbe:
+          httpGet:
+            path: /systemready
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /systemalive
+            port: 8080
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+          periodSeconds: 5
+        env: 
+        - name: rabbitmq_host
+          value: $(RABBITMQ_PUBLIC_SERVICE_HOST)
+        - name: rabbitmq_port
+          value: $(RABBITMQ_PUBLIC_SERVICE_PORT)
+        - name: cockroachdb_host
+          value: $(COCKROACHDB_PUBLIC_SERVICE_HOST)
+        - name: cockroachdb_port
+          value: $(COCKROACHDB_PUBLIC_SERVICE_PORT)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ala-@project.artifactId@
+  labels:
+    app: ala
+    tier: frontend
+    ver: @project.version@
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: ala
+    tier: frontend
+    ver: @project.version@
+  type: NodePort

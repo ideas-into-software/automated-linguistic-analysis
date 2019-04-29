@@ -1,0 +1,38 @@
+# Based on https://github.com/cockroachdb/cockroach/tree/fcc1637698fd0ec91c181bd096f963d35a16e4e8/cloud/kubernetes
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-init
+  labels:
+    app: cockroachdb
+spec:
+  template:
+    spec:
+      containers:
+      - name: cluster-init
+        image: cockroachdb/cockroach:v2.1.6
+        imagePullPolicy: IfNotPresent
+        env: 
+        - name: DB_NAME
+          value: autoanal
+        - name: DB_USER_NAME
+          value: ala
+        command:
+          - /bin/sh 
+          - -c
+          - |
+            {
+              while ! /cockroach/cockroach init --insecure --host=cockroachdb-0.cockroachdb 2>&1 >/dev/null | grep AlreadyExists; do sleep 1; done;
+            } && {
+               echo "Creating user $DB_USER_NAME)"
+               /cockroach/cockroach sql --insecure --user=root --host=cockroachdb-0.cockroachdb --execute="
+                CREATE USER IF NOT EXISTS $DB_USER_NAME;
+               "
+               
+               echo "Creating database $DB_NAME"
+               /cockroach/cockroach sql --insecure --user=root --host=cockroachdb-0.cockroachdb --execute="
+                CREATE DATABASE IF NOT EXISTS $DB_NAME;
+                GRANT ALL ON DATABASE $DB_NAME TO $DB_USER_NAME;
+               "
+            }
+      restartPolicy: OnFailure

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="mhs (mhs@into.software)">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/jquery.sse.js"></script>
+<title>Automated Linguistic Analysis (ALA)</title>
+</head>
+<body>
+	<header class="app-header" role="banner">
+		<div class="wrapper">
+			<a class="app-name" href="index.html"
+				title="Automated Linguistic Analysis (ALA)">Automated Linguistic Analysis (ALA)</a>
+		</div>
+	</header>
+	<main>
+		<div class="wrapper">
+			<form method="post" enctype="multipart/form-data" action="/analysis"
+				id="ala_form" name="ala_form" class="ala_form">
+				<p id="error_notsupported" class="error">Your browser is not supported! Please choose a modern browser with full support for latest HTML5 features and JavaScript enabled!</p>
+				<p id="drag_n_drop_upload">
+					<div class="ala_form__input">
+						<svg class="ala_form__icon" xmlns="http://www.w3.org/2000/svg"
+							width="24" height="24" viewBox="0 0 24 24">
+								<path
+								d="M12 24c6.627 0 12-5.373 12-12s-5.373-12-12-12-12 5.373-12 12 5.373 12 12 12zm-2-9h4v1h-4v-1zm0 3v-1h4v1h-4zm2-13l6 6h-4v3h-4v-3h-4l6-6z" /></svg>
+						<input type="file" name="file" id="file" class="ala_form__file"
+							data-multiple-caption="{count} files selected"
+							accept="audio/flac,audio/mp3,audio/ogg" /> <label for="file"
+							class="choose_file" id="choose-file"><strong>Choose a file</strong><span class="ala_form__dragndrop"> or drag it here</span>.</label>
+					</div>
+					<div id="error_file" class="error"></div>				
+				</p>
+				<p id="language_field">
+					<label for="language">Language used in file:</label> <select
+						name="language" id="language" required="required" size="1">
+						<option value="de-DE">German</option>
+						<option value="en-GB">GB English</option>
+						<option value="en-US" selected="selected">US English</option>
+						<option value="es-ES">Spanish</option>
+						<option value="fr-FR">French</option>
+						<option value="ja-JP">Japanese</option>
+						<option value="ko-KR">Korean</option>
+					</select>
+				</p>
+				<p id="description_field">
+					<label for="description">Description:</label><br />
+					<textarea cols="40" rows="5" maxlength="1024" name="description"
+						id="description"></textarea>
+				</p>
+				<p id="submit_button">
+					<button type="submit" class="ala_form__button">Analyze this!</button>
+				</p>
+				<p id="error_processing" class="error"></p>
+				<p id="try_again">
+					<a href="#" class="ala_form__restart" role="button">Try again!</a>
+				</p>
+				<p id="hint" class="hint">Accepted file formats: FLAC (audio/flac), MP3 (audio/mp3) and OGG (audio/ogg)</p>
+			</form>
+			<div id="statuses" class="output">
+				<p id="status_message"></p>
+			</div>
+			<div id="transcript" class="output">
+				<textarea cols="40" rows="5" maxlength="1024"
+					name="transcript_content" id="transcript_content"
+					disabled="disabled"></textarea>
+			</div>
+			<div id="analysis" class="output">
+				<ul id="tones">
+					<li id="tone_anger" class="no-tone">Anger</li>
+					<li id="tone_fear" class="no-tone">Fear</li>
+					<li id="tone_joy" class="no-tone">Joy</li>
+					<li id="tone_sadness" class="no-tone">Sadness</li>
+					<li id="tone_analytical" class="no-tone">Analytical</li>
+					<li id="tone_confident" class="no-tone">Confident</li>
+					<li id="tone_tentative" class="no-tone">Tentative</li>
+				</ul>
+			</div>
+		</div>
+	</main>
+	<footer class="app-footer">
+		<div class="wrapper">
+			<p class="author-info">
+				<a href="https://ideas.into.software/"
+					title="&copy; 2019 Ideas into Software" target="_blank">&copy; 2019 Ideas into Software</a>
+			</p>
+		</div>
+	</footer>
+	<script src="js/ala.js"></script>
+</body>
+</html>

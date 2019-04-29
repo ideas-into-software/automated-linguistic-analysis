@@ -1,0 +1,35 @@
+{
+    // Global Settings
+    ":configurator:resource-version" : 1,
+    ":configurator:symbolic-name" : "software.into.ala.k8-transcription-app.config",
+    ":configurator:version" : "0.0.1-SNAPSHOT",
+    
+    // Configure a JPA resource provider
+    "org.apache.aries.tx.control.jpa.xa~ala": {
+           "name": "ala.database",
+           "osgi.jdbc.driver.class": "org.postgresql.Driver",
+           "url": "jdbc:postgresql://cockroachdb-public:26257/autoanal?user=ala&sslmode=disable",
+           "osgi.unit.name": "ala-dao" },   
+    
+    // Target the Dao impls at the provider we configured
+    "software.into.ala.dao.impl.jpa.FileDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.AnalysisDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.TranscriptDaoImpl": {
+           "provider.target": "(name=ala.database)" },     
+   
+   // Configure messaging service
+   "software.into.ala.service.messaging" : {
+		"host": "rabbitmq-public",
+		"port": 5672
+   },
+  
+   // Configure transcription service
+   // TODO: remove API key before commit!
+   "software.into.ala.service.transcription": {
+    	"endpoint": "[ENTER ENDPOINT ADDRESS]",
+    	"apiKey": "[ENTER API KEY]", 
+    	"fileStorageLocation": "/files"
+    }  
+}

@@ -1,0 +1,36 @@
+{
+    // Global Settings
+    ":configurator:resource-version" : 1,
+    ":configurator:symbolic-name" : "software.into.ala.k8-web-app.config",
+    ":configurator:version" : "0.0.1-SNAPSHOT",
+    
+    // Configure a JPA resource provider
+    "org.apache.aries.tx.control.jpa.xa~ala": {
+           "name": "ala.database",
+           "osgi.jdbc.driver.class": "org.postgresql.Driver",
+           "url": "jdbc:postgresql://cockroachdb-public:26257/autoanal?user=ala&sslmode=disable",
+           "osgi.unit.name": "ala-dao" },   
+    
+    // Target the Dao impls at the provider we configured
+    "software.into.ala.dao.impl.jpa.FileDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.AnalysisDaoImpl": {
+           "provider.target": "(name=ala.database)" },
+    "software.into.ala.dao.impl.jpa.TranscriptDaoImpl": {
+           "provider.target": "(name=ala.database)" },     
+   
+   // Configure messaging service
+   "software.into.ala.service.messaging" : {
+		"host": "rabbitmq-public",
+		"port": 5672
+   },
+   
+   // Configure multipart request processing
+   "org.apache.aries.jax.rs.whiteboard.default": {
+		"osgi.http.whiteboard.servlet.multipart.enabled" : true,
+		"osgi.http.whiteboard.servlet.multipart.location" : "/files",
+		"osgi.http.whiteboard.servlet.multipart.fileSizeThreshold" : 1000000,
+		"osgi.http.whiteboard.servlet.multipart.maxFileSize" : 20000000,
+		"osgi.http.whiteboard.servlet.multipart.maxRequestSize" : 20000000
+   }
+}

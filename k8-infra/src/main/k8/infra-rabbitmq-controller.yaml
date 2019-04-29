@@ -1,0 +1,23 @@
+# Based on https://github.com/kubernetes/kubernetes/tree/release-1.3/examples/celery-rabbitmq
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    component: rabbitmq
+  name: rabbitmq-controller
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+        component: rabbitmq
+    spec:
+      containers:
+      - image: rabbitmq
+        name: rabbitmq
+        ports:
+        - containerPort: 5672
+        resources:
+          limits:
+            cpu: 100m
